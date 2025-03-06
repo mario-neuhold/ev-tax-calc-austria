@@ -73,6 +73,10 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
 
     // Mindestens 200 kg
     const effectiveWeight = Math.max(weight - reductionWeight, 200);
+    steps.push({ 
+      title: 'Berechnungsgrundlage:', 
+      calculation: `${formatNumber(effectiveWeight)} kg` 
+    });
 
     // Erste 500 kg
     const first500 = Math.min(effectiveWeight, 500);
