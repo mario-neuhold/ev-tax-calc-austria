@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
+type Step = {
+  title: string
+  calculation: string
+}
+
 const leistung = ref<number>(0)
 const gewicht = ref<number>(0)
 const darkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -10,29 +15,41 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   darkMode.value = e.matches
 })
 
-const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
-  const steps: string[] = []
+const calculatePowerTax = (kw: number): { total: number; steps: Step[] } => {
+  const steps: Step[] = []
   const reductionKw = 45
   let total = 0
 
   // Mindestens 10 kW
   const effectiveKw = Math.max(kw - reductionKw, 10)
-  steps.push(`Berechnungsgrundlage: ${effectiveKw} kW`)
+  steps.push({ 
+    title: 'Berechnungsgrundlage:', 
+    calculation: `${effectiveKw} kW` 
+  })
 
   // Erste 35 kW
   const first35 = Math.min(effectiveKw, 35)
   const first35Cost = first35 * 0.25
   total += first35Cost
-  steps.push(`Erste 35 kW um 0,25 €: ${first35} × 0,25 = ${first35Cost.toFixed(2)} €`)
+  steps.push({ 
+    title: 'Erste 35 kW um 0,25 €:', 
+    calculation: `${first35} × 0,25 = ${first35Cost.toFixed(2)} €` 
+  })
 
   // Nächste 25 kW
   if (effectiveKw > 35) {
     const next25 = Math.min(effectiveKw - 35, 25)
     const next25Cost = next25 * 0.35
     total += next25Cost
-    steps.push(`Nächste 25 kW um 0,35 €: ${next25} × 0,35 = ${next25Cost.toFixed(2)} €`)
+    steps.push({ 
+      title: 'Nächste 25 kW um 0,35 €:', 
+      calculation: `${next25} × 0,35 = ${next25Cost.toFixed(2)} €` 
+    })
   } else {
-    steps.push(`Nächste 25 kW um 0,35 €: 0 × 0,35 = 0,00 €`)
+    steps.push({ 
+      title: 'Nächste 25 kW um 0,35 €:', 
+      calculation: '0 × 0,35 = 0,00 €' 
+    })
   }
 
   // Restliche kW
@@ -40,18 +57,27 @@ const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
     const remaining = effectiveKw - 60
     const remainingCost = remaining * 0.45
     total += remainingCost
-    steps.push(`Restliche kW um 0,45 €: ${remaining} × 0,45 = ${remainingCost.toFixed(2)} €`)
+    steps.push({ 
+      title: 'Restliche kW um 0,45 €:', 
+      calculation: `${remaining} × 0,45 = ${remainingCost.toFixed(2)} €` 
+    })
   } else {
-    steps.push(`Restliche kW um 0,45 €: 0 × 0,45 = 0,00 €`)
+    steps.push({ 
+      title: 'Restliche kW um 0,45 €:', 
+      calculation: '0 × 0,45 = 0,00 €' 
+    })
   }
 
-  steps.push(`Gesamt: ${total.toFixed(2)} €`)
+  steps.push({ 
+    title: `Gesamt: ${total.toFixed(2)} €`,
+    calculation: '', 
+  })
 
   return { total, steps }
 }
 
-const calculateWeightTax = (weight: number): { total: number; steps: string[] } => {
-  const steps: string[] = []
+const calculateWeightTax = (weight: number): { total: number; steps: { title: string, calculation: string }[] } => {
+  const steps: { title: string, calculation: string }[] = []
   const reductionWeight = 900
   let total = 0
 
@@ -63,7 +89,10 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
   const first500Cost = first500 * 0.015
   if (first500 > 0) {
     total += first500Cost
-    steps.push(`Erste 500 kg um 0,015 €: ${first500} × 0,015 = ${first500Cost.toFixed(2)} €`)
+    steps.push({
+      title: 'Erste 500 kg um 0,015 €:',
+      calculation: `${first500} × 0,015 = ${first500Cost.toFixed(2)} €`
+    })
   }
 
   // Nächste 700 kg
@@ -71,9 +100,15 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
     const next700 = Math.min(effectiveWeight - 500, 700)
     const next700Cost = next700 * 0.030
     total += next700Cost
-    steps.push(`Nächste 700 kg um 0,030 €: ${next700} × 0,030 = ${next700Cost.toFixed(2)} €`)
+    steps.push({
+      title: 'Nächste 700 kg um 0,030 €:',
+      calculation: `${next700} × 0,030 = ${next700Cost.toFixed(2)} €`
+    })
   } else {
-    steps.push(`Nächste 700 kg um 0,030 €: 0 × 0,030 = 0,00 €`)
+    steps.push({
+      title: 'Nächste 700 kg um 0,030 €:',
+      calculation: '0 × 0,030 = 0,00 €'
+    })
   }
 
   // Restliche kg
@@ -81,12 +116,21 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
     const remaining = effectiveWeight - 1200
     const remainingCost = remaining * 0.045
     total += remainingCost
-    steps.push(`Restliche kg um 0,045 €: ${remaining} × 0,045 = ${remainingCost.toFixed(2)} €`)
+    steps.push({
+      title: 'Restliche kg um 0,045 €:',
+      calculation: `${remaining} × 0,045 = ${remainingCost.toFixed(2)} €`
+    })
   } else {
-    steps.push(`Restliche kg um 0,045 €: 0 × 0,045 = 0,00 €`)
+    steps.push({
+      title: 'Restliche kg um 0,045 €:',
+      calculation: '0 × 0,045 = 0,00 €'
+    })
   }
 
-  steps.push(`Gesamt: ${total.toFixed(2)} €`)
+  steps.push({
+    title: `Gesamt: ${total.toFixed(2)} €`,
+    calculation: ''
+  })
 
   return { total, steps }
 }
@@ -103,8 +147,6 @@ const result = computed(() => {
     monthlyTotal: monthlyTotal
   }
 })
-
-const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
 </script>
 
 <template>
@@ -123,13 +165,10 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
         </header>
         
         <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-sm">
-            Geben Sie die Leistung und das Gewicht Ihres Elektrofahrzeugs ein, um die monatliche Versicherungssteuer zu berechnen.
-          </p>
           <div class="space-y-6">
             <div>
               <label for="leistung" class="block text-sm font-medium">
-                Motorleistung (kW)
+                Motorleistung (kW) Ihres Fahrzeugs
               </label>
               <div class="mt-1 relative">
                 <input
@@ -151,7 +190,7 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
 
             <div>
               <label for="gewicht" class="block text-sm font-medium">
-                Eigengewicht (kg)
+                Eigengewicht (kg) Ihres Fahrzeugs
               </label>
               <div class="mt-1 relative">
                 <input
@@ -183,13 +222,14 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
           <details>
             <summary class="font-bold mb-2">Berechnungsdetails</summary>
             
-            <div class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Leistungsabhängige Steuer:</h3>
                 <ul class="list-disc pl-5 space-y-1">
-                  <li v-for="step in result.powerSteps" :key="step" 
+                  <li v-for="(step, i) in result.powerSteps" :key="i" 
                       class="text-sm">
-                    {{ step }}
+                    <span :class="{'font-medium': i === result.powerSteps.length - 1}">{{ step.title }}</span><br>
+                    <span class="italic">{{ step.calculation }}</span>
                   </li>
                 </ul>
               </div>
@@ -197,9 +237,10 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
               <div>
                 <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Gewichtsabhängige Steuer:</h3>
                 <ul class="list-disc pl-5 space-y-1">
-                  <li v-for="step in result.weightSteps" :key="step" 
+                  <li v-for="(step, i) in result.weightSteps" :key="i" 
                       class="text-sm">
-                    {{ step }}
+                    <span :class="{'font-medium': i === result.weightSteps.length - 1}">{{ step.title }}</span><br>
+                    <span class="italic">{{ step.calculation }}</span>
                   </li>
                 </ul>
               </div>
