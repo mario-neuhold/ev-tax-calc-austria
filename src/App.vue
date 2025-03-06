@@ -101,8 +101,8 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
       <div class="container mx-auto px-4 py-8">
         <header class="mb-8 text-center">
           <div class="flex justify-center items-center mb-4 relative">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white hyphens-auto">
-              Österreichischer E-Auto Versicherungssteuerrechner
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white text-pretty">
+              Öster&shy;reichischer E-Auto Versicherungs&shy;steuer&shy;rechner
             </h1>
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400">
