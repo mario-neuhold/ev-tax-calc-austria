@@ -1,7 +1,10 @@
 import { computed, Ref } from 'vue';
 import { Step, TaxCalculationResult } from '../types';
+import { useFormatting } from './useFormatting';
 
 export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
+  const { formatNumber, formatCurrency } = useFormatting();
+
   const calculatePowerTax = (kw: number): TaxCalculationResult => {
     const steps: Step[] = [];
     const reductionKw = 45;
@@ -11,7 +14,7 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
     const effectiveKw = Math.max(kw - reductionKw, 10);
     steps.push({ 
       title: 'Berechnungsgrundlage:', 
-      calculation: `${effectiveKw} kW` 
+      calculation: `${formatNumber(effectiveKw)} kW` 
     });
 
     // Erste 35 kW
@@ -20,7 +23,7 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
     total += first35Cost;
     steps.push({ 
       title: 'Erste 35 kW um 0,25 €:', 
-      calculation: `${first35} × 0,25 = ${first35Cost.toFixed(2)} €` 
+      calculation: `${formatNumber(first35)} × 0,25 = ${formatCurrency(first35Cost)}` 
     });
 
     // Nächste 25 kW
@@ -30,12 +33,12 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
       total += next25Cost;
       steps.push({ 
         title: 'Nächste 25 kW um 0,35 €:', 
-        calculation: `${next25} × 0,35 = ${next25Cost.toFixed(2)} €` 
+        calculation: `${formatNumber(next25)} × 0,35 = ${formatCurrency(next25Cost)}` 
       });
     } else {
       steps.push({ 
         title: 'Nächste 25 kW um 0,35 €:', 
-        calculation: '0 × 0,35 = 0,00 €' 
+        calculation: `0 × 0,35 = ${formatCurrency(0)}` 
       });
     }
 
@@ -46,17 +49,17 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
       total += remainingCost;
       steps.push({ 
         title: 'Restliche kW um 0,45 €:', 
-        calculation: `${remaining} × 0,45 = ${remainingCost.toFixed(2)} €` 
+        calculation: `${formatNumber(remaining)} × 0,45 = ${formatCurrency(remainingCost)}` 
       });
     } else {
       steps.push({ 
         title: 'Restliche kW um 0,45 €:', 
-        calculation: '0 × 0,45 = 0,00 €' 
+        calculation: `0 × 0,45 = ${formatCurrency(0)}` 
       });
     }
 
     steps.push({ 
-      title: `Gesamt: ${total.toFixed(2)} €`,
+      title: `Gesamt: ${formatCurrency(total)}`,
       calculation: '', 
     });
 
@@ -78,7 +81,7 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
       total += first500Cost;
       steps.push({
         title: 'Erste 500 kg um 0,015 €:',
-        calculation: `${first500} × 0,015 = ${first500Cost.toFixed(2)} €`
+        calculation: `${formatNumber(first500)} × 0,015 = ${formatCurrency(first500Cost)}`
       });
     }
 
@@ -89,12 +92,12 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
       total += next700Cost;
       steps.push({
         title: 'Nächste 700 kg um 0,030 €:',
-        calculation: `${next700} × 0,030 = ${next700Cost.toFixed(2)} €`
+        calculation: `${formatNumber(next700)} × 0,030 = ${formatCurrency(next700Cost)}`
       });
     } else {
       steps.push({
         title: 'Nächste 700 kg um 0,030 €:',
-        calculation: '0 × 0,030 = 0,00 €'
+        calculation: `0 × 0,030 = ${formatCurrency(0)}`
       });
     }
 
@@ -105,17 +108,17 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
       total += remainingCost;
       steps.push({
         title: 'Restliche kg um 0,045 €:',
-        calculation: `${remaining} × 0,045 = ${remainingCost.toFixed(2)} €`
+        calculation: `${formatNumber(remaining)} × 0,045 = ${formatCurrency(remainingCost)}`
       });
     } else {
       steps.push({
         title: 'Restliche kg um 0,045 €:',
-        calculation: '0 × 0,045 = 0,00 €'
+        calculation: `0 × 0,045 = ${formatCurrency(0)}`
       });
     }
 
     steps.push({
-      title: `Gesamt: ${total.toFixed(2)} €`,
+      title: `Gesamt: ${formatCurrency(total)}`,
       calculation: ''
     });
 
@@ -136,6 +139,7 @@ export function useTaxCalculation(leistung: Ref<number>, gewicht: Ref<number>) {
   });
 
   return {
-    result
+    result,
+    formatCurrency
   };
 }

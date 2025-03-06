@@ -8,7 +8,7 @@ import NumberInput from './components/NumberInput.vue';
 const leistung = ref<number>(0);
 const gewicht = ref<number>(0);
 const { darkMode, toggleDarkMode } = useDarkMode();
-const { result } = useTaxCalculation(leistung, gewicht);
+const { result, formatCurrency } = useTaxCalculation(leistung, gewicht);
 </script>
 
 <template>
@@ -48,7 +48,7 @@ const { result } = useTaxCalculation(leistung, gewicht);
           <div v-if="result" class="mt-8">
             <div class="mb-8 p-4 bg-green-50 dark:bg-green-900 rounded-md">
               <p class="text-lg font-bold text-green-800 dark:text-green-200">
-                Monatliche Versicherungssteuer: {{ result.monthlyTotal.toFixed(2) }} €
+                Monatliche Versicherungssteuer: {{ formatCurrency(result.monthlyTotal) }}
               </p>
             </div>
           </div>
