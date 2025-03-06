@@ -17,19 +17,22 @@ const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
 
   // Mindestens 10 kW
   const effectiveKw = Math.max(kw - reductionKw, 10)
+  steps.push(`Berechnungsgrundlage: ${effectiveKw} kW`)
 
   // Erste 35 kW
   const first35 = Math.min(effectiveKw, 35)
   const first35Cost = first35 * 0.25
   total += first35Cost
-  steps.push(`Erste ${first35} kW × 0,25 € = ${first35Cost.toFixed(2)} €`)
+  steps.push(`Erste 35 kW um 0,25 €: ${first35} × 0,25 = ${first35Cost.toFixed(2)} €`)
 
   // Nächste 25 kW
   if (effectiveKw > 35) {
     const next25 = Math.min(effectiveKw - 35, 25)
     const next25Cost = next25 * 0.35
     total += next25Cost
-    steps.push(`Nächste ${next25} kW × 0,35 € = ${next25Cost.toFixed(2)} €`)
+    steps.push(`Nächste 25 kW um 0,35 €: ${next25} × 0,35 = ${next25Cost.toFixed(2)} €`)
+  } else {
+    steps.push(`Nächste 25 kW um 0,35 €: 0 × 0,35 = 0,00 €`)
   }
 
   // Restliche kW
@@ -37,8 +40,12 @@ const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
     const remaining = effectiveKw - 60
     const remainingCost = remaining * 0.45
     total += remainingCost
-    steps.push(`Restliche ${remaining} kW × 0,45 € = ${remainingCost.toFixed(2)} €`)
+    steps.push(`Restliche kW um 0,45 €: ${remaining} × 0,45 = ${remainingCost.toFixed(2)} €`)
+  } else {
+    steps.push(`Restliche kW um 0,45 €: 0 × 0,45 = 0,00 €`)
   }
+
+  steps.push(`Gesamt: ${total.toFixed(2)} €`)
 
   return { total, steps }
 }
@@ -56,7 +63,7 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
   const first500Cost = first500 * 0.015
   if (first500 > 0) {
     total += first500Cost
-    steps.push(`Erste ${first500} kg × 0,015 € = ${first500Cost.toFixed(2)} €`)
+    steps.push(`Erste 500 kg um 0,015 €: ${first500} × 0,015 = ${first500Cost.toFixed(2)} €`)
   }
 
   // Nächste 700 kg
@@ -64,7 +71,9 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
     const next700 = Math.min(effectiveWeight - 500, 700)
     const next700Cost = next700 * 0.030
     total += next700Cost
-    steps.push(`Nächste ${next700} kg × 0,030 € = ${next700Cost.toFixed(2)} €`)
+    steps.push(`Nächste 700 kg um 0,030 €: ${next700} × 0,030 = ${next700Cost.toFixed(2)} €`)
+  } else {
+    steps.push(`Nächste 700 kg um 0,030 €: 0 × 0,030 = 0,00 €`)
   }
 
   // Restliche kg
@@ -72,15 +81,17 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
     const remaining = effectiveWeight - 1200
     const remainingCost = remaining * 0.045
     total += remainingCost
-    steps.push(`Restliche ${remaining} kg × 0,045 € = ${remainingCost.toFixed(2)} €`)
+    steps.push(`Restliche kg um 0,045 €: ${remaining} × 0,045 = ${remainingCost.toFixed(2)} €`)
+  } else {
+    steps.push(`Restliche kg um 0,045 €: 0 × 0,045 = 0,00 €`)
   }
+
+  steps.push(`Gesamt: ${total.toFixed(2)} €`)
 
   return { total, steps }
 }
 
 const result = computed(() => {
-  if (!leistung.value || !gewicht.value) return null
-
   const powerCalc = calculatePowerTax(leistung.value)
   const weightCalc = calculateWeightTax(gewicht.value)
   
@@ -98,7 +109,7 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
 
 <template>
   <div :class="{ 'dark': darkMode }">
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200 text-gray-700 dark:text-gray-300">
       <div class="container mx-auto px-4 py-8">
         <header class="mb-8 text-center">
           <div class="flex justify-center items-center mb-4 relative">
@@ -112,9 +123,12 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
         </header>
         
         <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <p class="text-sm">
+            Geben Sie die Leistung und das Gewicht Ihres Elektrofahrzeugs ein, um die monatliche Versicherungssteuer zu berechnen.
+          </p>
           <div class="space-y-6">
             <div>
-              <label for="leistung" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label for="leistung" class="block text-sm font-medium">
                 Motorleistung (kW)
               </label>
               <div class="mt-1 relative">
@@ -130,13 +144,13 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
                   aria-describedby="leistung-hint"
                 />
                 <p id="leistung-hint" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Mindestens 10 kW werden berechnet, 45 kW werden abgezogen
+                  45 kW werden abgezogen, mindestens 10 kW werden berechnet.
                 </p>
               </div>
             </div>
 
             <div>
-              <label for="gewicht" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label for="gewicht" class="block text-sm font-medium">
                 Eigengewicht (kg)
               </label>
               <div class="mt-1 relative">
@@ -152,16 +166,10 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
                   aria-describedby="gewicht-hint"
                 />
                 <p id="gewicht-hint" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Mindestens 200 kg werden berechnet, 900 kg werden abgezogen
+                  900 kg werden abgezogen, mindestens 200 kg werden berechnet.
                 </p>
               </div>
             </div>
-          </div>
-
-          <div v-if="!hasInput" class="mt-8 p-4 bg-blue-50 dark:bg-blue-900 rounded-md">
-            <p class="text-sm text-blue-700 dark:text-blue-200">
-              👆 Geben Sie die Leistung und das Gewicht Ihres Elektrofahrzeugs ein, um die monatliche Versicherungssteuer zu berechnen.
-            </p>
           </div>
 
           <div v-if="result" class="mt-8">
@@ -170,15 +178,17 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
                 Monatliche Versicherungssteuer: {{ result.monthlyTotal.toFixed(2) }} €
               </p>
             </div>
+          </div>
 
-            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Berechnungsdetails</h2>
+          <details>
+            <summary class="font-bold mb-2">Berechnungsdetails</summary>
             
             <div class="space-y-6">
               <div>
                 <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Leistungsabhängige Steuer:</h3>
                 <ul class="list-disc pl-5 space-y-1">
                   <li v-for="step in result.powerSteps" :key="step" 
-                      class="text-sm text-gray-700 dark:text-gray-300">
+                      class="text-sm">
                     {{ step }}
                   </li>
                 </ul>
@@ -188,13 +198,13 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
                 <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Gewichtsabhängige Steuer:</h3>
                 <ul class="list-disc pl-5 space-y-1">
                   <li v-for="step in result.weightSteps" :key="step" 
-                      class="text-sm text-gray-700 dark:text-gray-300">
+                      class="text-sm">
                     {{ step }}
                   </li>
                 </ul>
               </div>
             </div>
-          </div>
+          </details>
 
           <footer class="flex flex-col items-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p class="text-xs text-gray-500 dark:text-gray-400">
