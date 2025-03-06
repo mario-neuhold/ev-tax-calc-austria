@@ -12,29 +12,29 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 
 const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
   const steps: string[] = []
+  const reductionKw = 45
   let total = 0
 
   // Mindestens 10 kW
-  const effectiveKw = Math.max(kw, 10)
-  const reducedKw = Math.max(effectiveKw - 45, 0)
+  const effectiveKw = Math.max(kw - reductionKw, 10)
 
   // Erste 35 kW
-  const first35 = Math.min(reducedKw, 35)
+  const first35 = Math.min(effectiveKw, 35)
   const first35Cost = first35 * 0.25
   total += first35Cost
   steps.push(`Erste ${first35} kW × 0,25 € = ${first35Cost.toFixed(2)} €`)
 
   // Nächste 25 kW
-  if (reducedKw > 35) {
-    const next25 = Math.min(reducedKw - 35, 25)
+  if (effectiveKw > 35) {
+    const next25 = Math.min(effectiveKw - 35, 25)
     const next25Cost = next25 * 0.35
     total += next25Cost
     steps.push(`Nächste ${next25} kW × 0,35 € = ${next25Cost.toFixed(2)} €`)
   }
 
   // Restliche kW
-  if (reducedKw > 60) {
-    const remaining = reducedKw - 60
+  if (effectiveKw > 60) {
+    const remaining = effectiveKw - 60
     const remainingCost = remaining * 0.45
     total += remainingCost
     steps.push(`Restliche ${remaining} kW × 0,45 € = ${remainingCost.toFixed(2)} €`)
@@ -45,14 +45,14 @@ const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
 
 const calculateWeightTax = (weight: number): { total: number; steps: string[] } => {
   const steps: string[] = []
+  const reductionWeight = 900
   let total = 0
 
   // Mindestens 200 kg
-  const effectiveWeight = Math.max(weight, 200)
-  const reducedWeight = Math.max(effectiveWeight - 900, 0)
+  const effectiveWeight = Math.max(weight - reductionWeight, 200)
 
   // Erste 500 kg
-  const first500 = Math.min(reducedWeight, 500)
+  const first500 = Math.min(effectiveWeight, 500)
   const first500Cost = first500 * 0.015
   if (first500 > 0) {
     total += first500Cost
@@ -60,16 +60,16 @@ const calculateWeightTax = (weight: number): { total: number; steps: string[] } 
   }
 
   // Nächste 700 kg
-  if (reducedWeight > 500) {
-    const next700 = Math.min(reducedWeight - 500, 700)
+  if (effectiveWeight > 500) {
+    const next700 = Math.min(effectiveWeight - 500, 700)
     const next700Cost = next700 * 0.030
     total += next700Cost
     steps.push(`Nächste ${next700} kg × 0,030 € = ${next700Cost.toFixed(2)} €`)
   }
 
   // Restliche kg
-  if (reducedWeight > 1200) {
-    const remaining = reducedWeight - 1200
+  if (effectiveWeight > 1200) {
+    const remaining = effectiveWeight - 1200
     const remainingCost = remaining * 0.045
     total += remainingCost
     steps.push(`Restliche ${remaining} kg × 0,045 € = ${remainingCost.toFixed(2)} €`)
