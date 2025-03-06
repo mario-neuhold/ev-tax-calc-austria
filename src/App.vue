@@ -101,16 +101,9 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
       <div class="container mx-auto px-4 py-8">
         <header class="mb-8 text-center">
           <div class="flex justify-center items-center mb-4 relative">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white hyphens-auto">
               Österreichischer E-Auto Versicherungssteuerrechner
             </h1>
-            <button
-              @click="darkMode = !darkMode"
-              class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 absolute right-0"
-              aria-label="Dark Mode umschalten"
-            >
-              {{ darkMode ? '☀️' : '🌙' }}
-            </button>
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400">
             Berechnen Sie Ihre monatliche Versicherungssteuer für Elektrofahrzeuge nach den neuen österreichischen Bestimmungen.*
@@ -202,11 +195,18 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
             </div>
           </div>
 
-          <footer class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <footer class="flex flex-col items-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p class="text-xs text-gray-500 dark:text-gray-400">
               * Stand: 06.03.2025. Die Berechnungen basieren auf inoffiziellen Informationen zum geplanten Gesetz und können sich vor der endgültigen Gesetzgebung noch ändern. 
               Alle Angaben ohne Gewähr.
             </p>
+            <button
+              @click="darkMode = !darkMode"
+              class="mt-8 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+              aria-label="Dark Mode umschalten"
+            >
+              {{ darkMode ? '☀️' : '🌙' }}
+            </button>
           </footer>
         </div>
       </div>
