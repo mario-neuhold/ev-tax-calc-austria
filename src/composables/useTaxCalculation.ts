@@ -1,17 +1,6 @@
 import { computed, Ref } from 'vue';
-import { Step, TaxCalculationResult } from '../types';
+import { Step, TaxBracket, TaxCalculationResult } from '../types';
 import { useFormatting } from './useFormatting';
-
-/**
- * Interface for defining a tax bracket configuration
- */
-interface TaxBracket {
-  start: number;
-  end: number;
-  rate: number;
-  title: string;
-  formatRate?: boolean; // Whether to format rate with 2 or 3 decimal places
-}
 
 /**
  * Composable for vehicle tax calculation in Austria
