@@ -16,24 +16,25 @@ const calculatePowerTax = (kw: number): { total: number; steps: string[] } => {
 
   // Mindestens 10 kW
   const effectiveKw = Math.max(kw, 10)
+  const reducedKw = Math.max(effectiveKw - 45, 0)
 
   // Erste 35 kW
-  const first35 = Math.min(effectiveKw, 35)
+  const first35 = Math.min(reducedKw, 35)
   const first35Cost = first35 * 0.25
   total += first35Cost
   steps.push(`Erste ${first35} kW × 0,25 € = ${first35Cost.toFixed(2)} €`)
 
   // Nächste 25 kW
-  if (effectiveKw > 35) {
-    const next25 = Math.min(effectiveKw - 35, 25)
+  if (reducedKw > 35) {
+    const next25 = Math.min(reducedKw - 35, 25)
     const next25Cost = next25 * 0.35
     total += next25Cost
     steps.push(`Nächste ${next25} kW × 0,35 € = ${next25Cost.toFixed(2)} €`)
   }
 
   // Restliche kW
-  if (effectiveKw > 60) {
-    const remaining = effectiveKw - 60
+  if (reducedKw > 60) {
+    const remaining = reducedKw - 60
     const remainingCost = remaining * 0.45
     total += remainingCost
     steps.push(`Restliche ${remaining} kW × 0,45 € = ${remainingCost.toFixed(2)} €`)
@@ -129,7 +130,7 @@ const hasInput = computed(() => leistung.value > 0 || gewicht.value > 0)
                   aria-describedby="leistung-hint"
                 />
                 <p id="leistung-hint" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Mindestens 10 kW werden berechnet
+                  Mindestens 10 kW werden berechnet, 45 kW werden abgezogen
                 </p>
               </div>
             </div>
