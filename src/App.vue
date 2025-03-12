@@ -48,7 +48,8 @@ const { result, formatCurrency } = useTaxCalculation(leistung, gewicht);
           <div v-if="result" class="mt-8">
             <div class="mb-8 p-4 bg-green-50 dark:bg-green-900 rounded-md">
               <p class="text-lg font-bold text-green-800 dark:text-green-200">
-                Monatliche Versicherungssteuer: {{ formatCurrency(result.monthlyTotal) }}
+                Monatliche Steuer: {{ formatCurrency(result.monthlyTotal) }}<br>
+                Jährliche Steuer: {{ formatCurrency(result.monthlyTotal * 12) }}
               </p>
             </div>
           </div>
