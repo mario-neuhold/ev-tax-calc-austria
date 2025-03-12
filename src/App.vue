@@ -72,8 +72,15 @@ const { result, formatCurrency } = useTaxCalculation(leistung, gewicht);
 
           <footer class="flex flex-col items-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p class="text-xs text-gray-500 dark:text-gray-400">
-              * Stand: 06.03.2025. Die Berechnungen basieren auf inoffiziellen Informationen zum geplanten Gesetz und können sich vor der endgültigen Gesetzgebung noch ändern. 
-              Alle Angaben ohne Gewähr.
+              * Gültig ab 1.4.2025<br>
+              Informationsstand: 12.03.2025. Die Berechnungen basieren auf dem <a
+                class="underline"
+                href="https://www.parlament.gv.at/gegenstand/XXVIII/BNR/14?selectedStage=100"
+                target="_blank"
+                rel="noreferrer nofollow"
+                title="Zu parlament.gv.at"
+              >Budget&shy;sanierungs&shy;maßnahmen&shy;gesetz 2025</a> (§ 6. 2a) aus dem 
+              Beschluss des Nationalrates vom 7.3.2025. Alle Angaben ohne Gewähr.
             </p>
             <button
               @click="toggleDarkMode"
